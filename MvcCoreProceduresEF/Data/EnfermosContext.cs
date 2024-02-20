@@ -9,5 +9,6 @@ namespace MvcCoreProceduresEF.Data
             : base(options) { }
 
         public DbSet<Enfermo> Enfermos { get; set; }
+        public DbSet<Doctor> Doctores { get; set; }
     }
 }

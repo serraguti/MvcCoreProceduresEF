@@ -23,6 +23,15 @@ using System.Data.Common;
 //	delete from ENFERMO
 //	where INSCRIPCION=@inscripcion
 //go
+//create procedure SP_INSERT_ENFERMO
+//(@apellido nvarchar(50), @direccion nvarchar(100)
+//, @fechanacimiento datetime, @genero nvarchar(10))
+//as
+//	declare @maxinscripcion int
+//	select @maxinscripcion = max(INSCRIPCION) + 1 from ENFERMO
+//	insert into ENFERMO values (@maxinscripcion, @apellido
+//    , @direccion, @fechanacimiento, @genero, 7888)
+//go
 #endregion
 
 namespace MvcCoreProceduresEF.Repositories
@@ -94,6 +103,30 @@ namespace MvcCoreProceduresEF.Repositories
             //PARA EJECUTAR, NECESITAMOS AsEnumerable()
             Enfermo enfermo = consulta.AsEnumerable().FirstOrDefault();
             return enfermo;
+        }
+
+        public void DeleteEnfermo(int inscripcion)
+        {
+            string sql = "SP_DELETE_ENFERMO @inscripcion";
+            SqlParameter pamInscripcion =
+                new SqlParameter("@inscripcion", inscripcion);
+            //EJECUTAR CONSULTAS DE ACCION SE REALIZA MEDIANTE 
+            //EL METODO ExecuteSqlRaw() QUE SE ACCEDE DESDE 
+            //Database DENTRO DEL DbContext
+            this.context.Database.ExecuteSqlRaw(sql, pamInscripcion);
+        }
+
+        public void InsertEnfermo(string apellido, string direccion
+            , DateTime fechaNacimiento, string genero)
+        {
+            string sql = "SP_INSERT_ENFERMO @apellido, @direccion, @fechanacimiento, "
+                + "@genero";
+            SqlParameter pamApellido = new SqlParameter("@apellido", apellido);
+            SqlParameter pamDireccion = new SqlParameter("@direccion", direccion);
+            SqlParameter pamFecha = new SqlParameter("@fechanacimiento", fechaNacimiento);
+            SqlParameter pamGenero = new SqlParameter("@genero", genero);
+            this.context.Database.ExecuteSqlRaw(sql, pamApellido, pamDireccion
+                , pamFecha, pamGenero);
         }
     }
 }
